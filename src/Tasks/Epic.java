@@ -1,11 +1,13 @@
+package Tasks;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
     private List<Subtask> subtasks;
 
-    public Epic(int id, String title, String description) {
-        super(id, title, description, Status.NEW);
+    public Epic(String title, String description) {
+        super(title, description);
         this.subtasks = new ArrayList<>();
     }
 
@@ -50,7 +52,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "Tasks.Epic{" +
                 "id=" + getId() +
                 ", title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +

@@ -1,14 +1,15 @@
+package Tasks;
+
 public class Task {
     private int id;
     private String title;
     private String description;
     private Status status;
 
-    public Task(int id, String title, String description, Status status) {
-        this.id = id;
+    public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.status = status;
+        this.status = Status.NEW;
     }
 
     public int getId() {
@@ -27,6 +28,18 @@ public class Task {
         return status;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setStatus(Status status) {
         this.status = status;
     }
@@ -43,21 +56,12 @@ public class Task {
     public int hashCode() {
         int hash = 17;
         hash = 31 * hash + id;
-        if (title != null) {
-            hash = 31 * hash + title.hashCode();
-        }
-        if (description != null) {
-            hash = 31 * hash + description.hashCode();
-        }
-        if (status != null) {
-            hash = 31 * hash + status.hashCode();
-        }
         return hash;
     }
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "Tasks.Task{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +

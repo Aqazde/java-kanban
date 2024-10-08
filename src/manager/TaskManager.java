@@ -1,8 +1,8 @@
-package TaskManager;
+package manager;
 
-import Tasks.Epic;
-import Tasks.Subtask;
-import Tasks.Task;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,27 +14,24 @@ public class TaskManager {
     private HashMap<Integer, Epic> epics = new HashMap<>();
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-    public Task createTask(String title, String description) {
-        Task task = new Task(title, description);
+    public Task createTask(Task task) {
         task.setId(currentId++);
         tasks.put(task.getId(), task);
         return task;
     }
 
-    public Epic createEpic(String title, String description) {
-        Epic epic = new Epic(title, description);
+    public Epic createEpic(Epic epic) {
         epic.setId(currentId++);
         epics.put(epic.getId(), epic);
         return epic;
     }
 
-    public Subtask createSubtask(String title, String description, int epicId) {
+    public Subtask createSubtask(Subtask subtask, int epicId) {
         Epic epic = epics.get(epicId);
         if (epic == null) {
             System.out.println("Эпик с id " + epicId + " не существует");
             return null;
         }
-        Subtask subtask = new Subtask(title, description, epicId);
         subtask.setId(currentId++);
         subtasks.put(subtask.getId(), subtask);
         epic.addSubtask(subtask);
@@ -55,7 +52,11 @@ public class TaskManager {
     }
 
     public void updateTask(Task task) {
-        tasks.put(task.getId(), task);
+        if (tasks.containsKey(task.getId())) {
+            tasks.put(task.getId(), task);
+        } else {
+            System.out.println("Задача с id " + task.getId() + " не существует");
+        }
     }
 
     public void updateEpic(Epic epic) {

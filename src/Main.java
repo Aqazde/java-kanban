@@ -1,25 +1,32 @@
-import TaskManager.TaskManager;
-import Tasks.Epic;
-import Tasks.Status;
-import Tasks.Subtask;
-import Tasks.Task;
+import manager.TaskManager;
+import tasks.Epic;
+import tasks.Status;
+import tasks.Subtask;
+import tasks.Task;
 
 public class Main {
     public static void main(String[] args) {
         TaskManager manager = new TaskManager();
 
-        Task task1 = manager.createTask("Отучиться в универе", "Закрыть курсы успешно");
-        Task task2 = manager.createTask("Уборка", "Убрать квартиру");
+        Task task1 = new Task("Отучиться в универе", "Закрыть курсы успешно");
+        manager.createTask(task1);
+        Task task2 = new Task("Уборка", "Убрать квартиру");
+        manager.createTask(task2);
 
-        Epic epic1 = manager.createEpic("Сделать уроки", "Уроки по курсам");
-        Subtask subtask1 = manager.createSubtask("Выполнить тех.здание", "Выполнение тех.задания " +
-                "спринта", epic1.getId());
-        Subtask subtask2 = manager.createSubtask("Начать новый спринт", "Пройдя проверку тех.задания, " +
-                "начать изучение 5го спринта", epic1.getId());
+        Epic epic1 = new Epic("Сделать уроки", "Уроки по курсам");
+        manager.createEpic(epic1);
+        Subtask subtask1 = new Subtask("Выполнить тех. задание", "Выполнение тех. задания спринта",
+                epic1.getId());
+        manager.createSubtask(subtask1, epic1.getId());
+        Subtask subtask2 = new Subtask("Начать новый спринт", "Пройдя проверку тех. задания, " +
+                "начать изучение 5-го спринта", epic1.getId());
+        manager.createSubtask(subtask2, epic1.getId());
 
-        Epic epic2 = manager.createEpic("Диплом", "Университетская дипломная работа");
-        Subtask subtask3 = manager.createSubtask("Выбрать тему", "Выбрать тему дипломной работы",
-                epic2.getId());
+        Epic epic2 = new Epic("Диплом", "Университетская дипломная работа");
+        manager.createEpic(epic2);
+        Subtask subtask3 = new Subtask("Выбрать тему", "Выбрать тему дипломной работы", epic2.getId());
+        manager.createSubtask(subtask3, epic2.getId());
+
 
         System.out.println("Получение списка всех задач");
         for (Task task : manager.getAllTasks()) {

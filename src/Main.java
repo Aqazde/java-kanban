@@ -17,15 +17,15 @@ public class Main {
         manager.createEpic(epic1);
         Subtask subtask1 = new Subtask("Выполнить тех. задание", "Выполнение тех. задания спринта",
                 epic1.getId());
-        manager.createSubtask(subtask1, epic1.getId());
+        manager.createSubtask(subtask1);
         Subtask subtask2 = new Subtask("Начать новый спринт", "Пройдя проверку тех. задания, " +
                 "начать изучение 5-го спринта", epic1.getId());
-        manager.createSubtask(subtask2, epic1.getId());
+        manager.createSubtask(subtask2);
 
         Epic epic2 = new Epic("Диплом", "Университетская дипломная работа");
         manager.createEpic(epic2);
         Subtask subtask3 = new Subtask("Выбрать тему", "Выбрать тему дипломной работы", epic2.getId());
-        manager.createSubtask(subtask3, epic2.getId());
+        manager.createSubtask(subtask3);
 
 
         System.out.println("Получение списка всех задач");
@@ -60,7 +60,7 @@ public class Main {
         for (Subtask subtask : manager.getAllSubtasks()) {
             System.out.println(subtask);
         }
-        System.out.println("Статус эпика 'Сделать уроки' после удаления подзадачи:");
+        System.out.println("\nСтатус эпика 'Сделать уроки' после удаления подзадачи:");
         System.out.println(epic1.getStatus());
 
         manager.deleteEpic(epic1.getId());
@@ -68,7 +68,7 @@ public class Main {
         for (Epic epic : manager.getAllEpics()) {
             System.out.println(epic);
         }
-        System.out.println("Список всех подзадач после удаления эпика 'Сделать уроки':");
+        System.out.println("\nСписок всех подзадач после удаления эпика 'Сделать уроки':");
         for (Subtask subtask : manager.getAllSubtasks()) {
             System.out.println(subtask);
         }
@@ -80,6 +80,20 @@ public class Main {
         System.out.println("\nУдаление всех задач");
         manager.deleteAllTasks();
         System.out.println("После удаления всех задач:");
+        System.out.println("Все задачи: " + manager.getAllTasks());
+        System.out.println("Все эпики: " + manager.getAllEpics());
+        System.out.println("Все подзадачи: " + manager.getAllSubtasks());
+
+        System.out.println("\nУдаление всех подзадач");
+        manager.deleteAllSubtasks();
+        System.out.println("После удаления всех подзадач:");
+        System.out.println("Все задачи: " + manager.getAllTasks());
+        System.out.println("Все эпики: " + manager.getAllEpics());
+        System.out.println("Все подзадачи: " + manager.getAllSubtasks());
+
+        System.out.println("\nУдаление всех эпиков");
+        manager.deleteAllEpics();
+        System.out.println("После удаления всех эпиков:");
         System.out.println("Все задачи: " + manager.getAllTasks());
         System.out.println("Все эпики: " + manager.getAllEpics());
         System.out.println("Все подзадачи: " + manager.getAllSubtasks());

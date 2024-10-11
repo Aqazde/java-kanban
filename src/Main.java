@@ -1,4 +1,4 @@
-import manager.TaskManager;
+import managers.InMemoryTaskManager;
 import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
@@ -6,7 +6,7 @@ import tasks.Task;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager manager = new TaskManager();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
 
         Task task1 = new Task("Отучиться в универе", "Закрыть курсы успешно");
         manager.createTask(task1);

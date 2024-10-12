@@ -97,5 +97,8 @@ public class Main {
         System.out.println("Все задачи: " + manager.getAllTasks());
         System.out.println("Все эпики: " + manager.getAllEpics());
         System.out.println("Все подзадачи: " + manager.getAllSubtasks());
+
+        System.out.println("\nПолучение историй");
+        System.out.println(manager.getHistory());
     }
 }

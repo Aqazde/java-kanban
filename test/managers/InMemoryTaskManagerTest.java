@@ -6,6 +6,8 @@ import tasks.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
@@ -85,5 +87,156 @@ class InMemoryTaskManagerTest {
         assertEquals(originalSubtask.getTitle(), retrievedSubtask.getTitle(), "Заголовки подзадач должны совпадать");
         assertEquals(originalSubtask.getDescription(), retrievedSubtask.getDescription(), "Описание подзадач должно совпадать");
         assertEquals(originalSubtask.getEpicId(), retrievedSubtask.getEpicId(), "ID эпика подзадач должны совпадать");
+    }
+
+    @Test
+    void testUpdateTask() {
+        Task task = new Task("Task 1", "Description for Task 1");
+        manager.createTask(task);
+
+        task.setDescription("Updated Description");
+        manager.updateTask(task);
+
+        Task updatedTask = manager.getTaskById(task.getId());
+        assertEquals("Updated Description", updatedTask.getDescription(),
+                "Описание задачи не обновилось");
+    }
+
+    @Test
+    void testUpdateSubtask() {
+        Epic epic = new Epic("Epic 1", "Description for Epic 1");
+        manager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Description for Subtask 1", epic.getId());
+        manager.createSubtask(subtask);
+
+        subtask.setDescription("Updated Subtask Description");
+        manager.updateSubtask(subtask);
+
+        Subtask updatedSubtask = manager.getSubtaskById(subtask.getId());
+        assertEquals("Updated Subtask Description", updatedSubtask.getDescription(),
+                "Описание подзадачи не обновилось");
+    }
+
+    @Test
+    void testUpdateEpic() {
+        Epic epic = new Epic("Epic 1", "Description for Epic 1");
+        manager.createEpic(epic);
+
+        epic.setDescription("Updated Epic Description");
+        manager.updateEpic(epic);
+
+        Epic updatedEpic = manager.getEpicById(epic.getId());
+        assertEquals("Updated Epic Description", updatedEpic.getDescription(),
+                "Описание эпика не обновилось");
+    }
+
+    @Test
+    void testDeleteTask() {
+        Task task = new Task("Task 1", "Description for Task 1");
+        manager.createTask(task);
+        manager.deleteTask(task.getId());
+
+        assertNull(manager.getTaskById(task.getId()), "Задача не удалена");
+    }
+
+    @Test
+    void testDeleteEpic() {
+        Epic epic = new Epic("Epic 1", "Description for Epic 1");
+        manager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Description for Subtask 1", epic.getId());
+        manager.createSubtask(subtask);
+
+        manager.deleteEpic(epic.getId());
+
+        assertNull(manager.getEpicById(epic.getId()), "Эпик не удален");
+        assertNull(manager.getSubtaskById(subtask.getId()),
+                "Подзадача не удалена");
+    }
+
+    @Test
+    void testDeleteSubtask() {
+        Epic epic = new Epic("Epic 1", "Description for Epic 1");
+        manager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Description for Subtask 1", epic.getId());
+        manager.createSubtask(subtask);
+        manager.deleteSubtask(subtask.getId());
+
+        assertNull(manager.getSubtaskById(subtask.getId()), "Подзадача не удалена");
+    }
+
+    @Test
+    void testGetAllTasks() {
+        Task task1 = new Task("Task 1", "Description for Task 1");
+        Task task2 = new Task("Task 2", "Description for Task 2");
+        manager.createTask(task1);
+        manager.createTask(task2);
+
+        List<Task> tasks = manager.getAllTasks();
+        assertEquals(2, tasks.size(), "Должно быть две задачи");
+    }
+
+    @Test
+    void testGetAllEpics() {
+        Epic epic1 = new Epic("Epic 1", "Description for Epic 1");
+        Epic epic2 = new Epic("Epic 2", "Description for Epic 2");
+        manager.createEpic(epic1);
+        manager.createEpic(epic2);
+
+        List<Epic> epics = manager.getAllEpics();
+        assertEquals(2, epics.size(), "Должно быть два эпика");
+    }
+
+    @Test
+    void testGetAllSubtasks() {
+        Epic epic = new Epic("Epic 1", "Description for Epic 1");
+        manager.createEpic(epic);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Description for Subtask 1", epic.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description for Subtask 2", epic.getId());
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+
+        List<Subtask> subtasks = manager.getAllSubtasks();
+        assertEquals(2, subtasks.size(), "Должно быть две подзадачи");
+    }
+
+    @Test
+    void testDeleteAllTasks() {
+        Task task = new Task("Task 1", "Description for Task 1");
+        manager.createTask(task);
+        manager.deleteAllTasks();
+
+        assertTrue(manager.getAllTasks().isEmpty(), "Все задачи не удалены");
+    }
+
+    @Test
+    void testDeleteAllEpics() {
+        Epic epic = new Epic("Epic 1", "Description for Epic 1");
+        manager.createEpic(epic);
+        manager.deleteAllEpics();
+
+        assertTrue(manager.getAllEpics().isEmpty(), "Все эпики не удалены");
+    }
+
+    @Test
+    void testDeleteAllSubtasks() {
+        Epic epic = new Epic("Epic 1", "Description for Epic 1");
+        manager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Description for Subtask 1", epic.getId());
+        manager.createSubtask(subtask);
+        manager.deleteAllSubtasks();
+
+        assertTrue(manager.getAllSubtasks().isEmpty(), "Все подзадачи не удалены");
+    }
+
+    @Test
+    void testDeleteNonExistentTask() {
+        manager.deleteTask(999);
+        assertTrue(manager.getAllTasks().isEmpty(), "Задача не должна быть добавлена" +
+                "(ее не существует изначально)");
     }
 }

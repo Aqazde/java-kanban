@@ -18,14 +18,12 @@ public class InMemoryTaskManager implements TaskManager {
     public Task createTask(Task task) {
         task.setId(currentId++);
         tasks.put(task.getId(), task);
-        historyManager.add(task);
         return task;
     }
 
     public Epic createEpic(Epic epic) {
         epic.setId(currentId++);
         epics.put(epic.getId(), epic);
-        historyManager.add(epic);
         return epic;
     }
 
@@ -37,7 +35,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
         subtask.setId(currentId++);
         subtasks.put(subtask.getId(), subtask);
-        historyManager.add(subtask);
         epic.addSubtask(subtask);
         epic.updateStatus();
         return subtask;
@@ -58,7 +55,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
             tasks.put(task.getId(), task);
-            historyManager.add(task);
         } else {
             System.out.println("Задача с id " + task.getId() + " не существует");
         }
@@ -68,7 +64,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
             epic.updateStatus();
-            historyManager.add(epic);
         } else {
             System.out.println("Эпик с id " + epic.getId() + " не существует");
         }
@@ -81,7 +76,6 @@ public class InMemoryTaskManager implements TaskManager {
             if (epic != null) {
                 epic.updateStatus();
             }
-            historyManager.add(subtask);
         } else {
             System.out.println("Подзадача с id " + subtask.getId() + " не существует");
         }
@@ -142,34 +136,20 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int id) {
         Task task = tasks.get(id);
-        if (task != null) {
-            return task;
-        }
-        Subtask subtask = subtasks.get(id);
-        if (subtask != null) {
-            return subtask;
-        }
-        Epic epic = epics.get(id);
-        if (epic != null) {
-            return epic;
-        }
-        return null;
+        historyManager.add(task);
+        return task;
     }
 
     public Epic getEpicById(int id) {
         Epic epic = epics.get(id);
-        if (epic != null) {
-            return epic;
-        }
-        return null;
+        historyManager.add(epic);
+        return epic;
     }
 
     public Subtask getSubtaskById(int id) {
         Subtask subtask = subtasks.get(id);
-        if (subtask != null) {
-            return subtask;
-        }
-        return null;
+        historyManager.add(subtask);
+        return subtask;
     }
 
 

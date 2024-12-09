@@ -118,6 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllTasks() {
         tasks.clear();
     }
+
     // Удаление всех Эпиков
     public void deleteAllEpics() {
         for (Epic epic : epics.values()) {
@@ -125,6 +126,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epics.clear();
     }
+
     // Удаление всех подзадач
     public void deleteAllSubtasks() {
         for (Epic epic : epics.values()) {

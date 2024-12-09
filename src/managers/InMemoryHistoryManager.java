@@ -81,6 +81,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         remove(task.getId());
         linkLast(task);
     }
+
     @Override
     public void remove(int id) {
         Node node = nodeMap.get(id);

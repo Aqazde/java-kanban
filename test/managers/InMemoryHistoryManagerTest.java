@@ -92,4 +92,79 @@ class InMemoryHistoryManagerTest {
         assertEquals(1, history.size(), "История должна содержать только одну задачу(без дубликата)");
         assertEquals(task, history.get(0));
     }
+
+    @Test
+    void testRemoveTaskFromBeginning() {
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
+        Task task1 = new Task("Task 1", "Description 1");
+        task1.setId(1);
+
+        Task task2 = new Task("Task 2", "Description 2");
+        task2.setId(2);
+
+        Task task3 = new Task("Task 3", "Description 3");
+        task3.setId(3);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(1); // Удаляем из начала
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(2, history.size(), "История должна содержать две задачи после удаления");
+        assertEquals(task2, history.get(0), "Первая задача должна быть Task 2");
+        assertEquals(task3, history.get(1), "Вторая задача должна быть Task 3");
+    }
+
+    @Test
+    void testRemoveTaskFromMiddle() {
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
+        Task task1 = new Task("Task 1", "Description 1");
+        task1.setId(1);
+
+        Task task2 = new Task("Task 2", "Description 2");
+        task2.setId(2);
+
+        Task task3 = new Task("Task 3", "Description 3");
+        task3.setId(3);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(2); // Удаляем из середины
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(2, history.size(), "История должна содержать две задачи после удаления");
+        assertEquals(task1, history.get(0), "Первая задача должна быть Task 1");
+        assertEquals(task3, history.get(1), "Вторая задача должна быть Task 3");
+    }
+
+    @Test
+    void testRemoveTaskFromEnd() {
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
+        Task task1 = new Task("Task 1", "Description 1");
+        task1.setId(1);
+
+        Task task2 = new Task("Task 2", "Description 2");
+        task2.setId(2);
+
+        Task task3 = new Task("Task 3", "Description 3");
+        task3.setId(3);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(3); // Удаляем из конца
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(2, history.size(), "История должна содержать две задачи после удаления");
+        assertEquals(task1, history.get(0), "Первая задача должна быть Task 1");
+        assertEquals(task2, history.get(1), "Вторая задача должна быть Task 2");
+    }
 }

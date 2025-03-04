@@ -239,4 +239,39 @@ class InMemoryTaskManagerTest {
         assertTrue(manager.getAllTasks().isEmpty(), "Задача не должна быть добавлена" +
                 "(ее не существует изначально)");
     }
+
+    // id не остается после удаления и подзадача исчезает с эпика
+    @Test
+    void testDeleteSubtaskUpdatesEpic() {
+        InMemoryTaskManager manager = new InMemoryTaskManager();
+
+        Epic epic = new Epic("Epic 1", "Epic Description");
+        manager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Subtask 1", "Description", epic.getId());
+        manager.createSubtask(subtask);
+
+        assertEquals(1, epic.getSubtasks().size(), "В эпике должна быть одна подзадача");
+
+        manager.deleteSubtask(subtask.getId());
+        assertEquals(0, epic.getSubtasks().size(), "После удаления подзадачи эпик не должен содержать подзадач");
+    }
+
+    @Test
+    void testUpdateTaskWithSetters() {
+        InMemoryTaskManager manager = new InMemoryTaskManager();
+
+        Task task = new Task("Original Title", "Original Description");
+        manager.createTask(task);
+
+        Task retrievedTask = manager.getTaskById(task.getId());
+        assertNotNull(retrievedTask);
+
+        retrievedTask.setTitle("Updated Title");
+        retrievedTask.setDescription("Updated Description");
+
+        Task updatedTask = manager.getTaskById(task.getId());
+        assertEquals("Updated Title", updatedTask.getTitle(), "Заголовок должен быть обновлен");
+        assertEquals("Updated Description", updatedTask.getDescription(), "Описание должно быть обновлено");
+    }
 }

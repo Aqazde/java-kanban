@@ -88,6 +88,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void deleteTask(int taskId) {
         tasks.remove(taskId);
+        historyManager.remove(taskId);
     }
 
     public void deleteSubtask(int subtaskId) {
@@ -98,6 +99,7 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.removeSubtask(subtask);
                 epic.updateStatus();
             }
+            historyManager.remove(subtaskId);
         } else {
             System.out.println("Подзадача с id " + subtaskId + " не существует");
         }
@@ -108,7 +110,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic != null) {
             for (Subtask subtask : epic.getSubtasks()) {
                 subtasks.remove(subtask.getId());
+                historyManager.remove(subtask.getId());
             }
+            historyManager.remove(epicId);
         } else {
             System.out.println("Эпик с id " + epicId + " не существует");
         }
@@ -116,17 +120,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Удаление всех Задач
     public void deleteAllTasks() {
+        for (int taskId : tasks.keySet()) {
+            historyManager.remove(taskId);
+        }
         tasks.clear();
     }
+
     // Удаление всех Эпиков
     public void deleteAllEpics() {
         for (Epic epic : epics.values()) {
+            for (Subtask subtask : epic.getSubtasks()) {
+                historyManager.remove(subtask.getId());
+            }
             subtasks.clear();
+            historyManager.remove(epic.getId());
         }
         epics.clear();
     }
+
     // Удаление всех подзадач
     public void deleteAllSubtasks() {
+        for (int subtaskId : subtasks.keySet()) {
+            historyManager.remove(subtaskId);
+        }
         for (Epic epic : epics.values()) {
             epic.getSubtasks().clear();
         }

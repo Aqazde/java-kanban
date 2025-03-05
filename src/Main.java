@@ -6,6 +6,7 @@ import tasks.Subtask;
 import tasks.Task;
 
 import java.io.File;
+
 public class Main {
     public static void main(String[] args) {
         InMemoryTaskManager manager = new InMemoryTaskManager();
@@ -140,5 +141,6 @@ public class Main {
         fileManager.deleteTask(fTask1.getId());
         System.out.println("\nСписок задач после удаления одной (из файла):");
         System.out.println(fileManager.getAllTasks());
+
     }
 }

@@ -1,9 +1,11 @@
 import managers.InMemoryTaskManager;
+import managers.FileBackedTaskManager;
 import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.io.File;
 public class Main {
     public static void main(String[] args) {
         InMemoryTaskManager manager = new InMemoryTaskManager();
@@ -100,5 +102,43 @@ public class Main {
 
         System.out.println("\nПолучение историй");
         System.out.println(manager.getHistory());
+
+        // Новый функционал по работе с файлами
+        System.out.println("\n\n ---- FileBackedTaskManager ---- ");
+
+        File file = new File("tasks.csv");
+        FileBackedTaskManager fileManager = FileBackedTaskManager.loadFromFile(file);
+
+
+        Task fTask1 = new Task("Написать дипломную", "Написать дипломную работу в университете");
+        fileManager.createTask(fTask1);
+        Task fTask2 = new Task("Купить продукты", "Составить список и сходить в супермаркет");
+        fileManager.createTask(fTask2);
+
+        Epic fEpic1 = new Epic("Поездка в Алматы", "Собрать вещи и оформить документы");
+        fileManager.createEpic(fEpic1);
+        Subtask fSubtask1 = new Subtask("Купить билеты", "Найти и оплатить билеты", fEpic1.getId());
+        fileManager.createSubtask(fSubtask1);
+        Subtask fSubtask2 = new Subtask("Собрать вещи", "Подготовить и упаковать одежду", fEpic1.getId());
+        fileManager.createSubtask(fSubtask2);
+
+        System.out.println("\nСписок всех задач (из файла):");
+        for (Task task : fileManager.getAllTasks()) {
+            System.out.println(task);
+        }
+
+        System.out.println("\nСписок всех эпиков (из файла):");
+        for (Epic epic : fileManager.getAllEpics()) {
+            System.out.println(epic);
+        }
+
+        System.out.println("\nСписок всех подзадач (из файла):");
+        for (Subtask subtask : fileManager.getAllSubtasks()) {
+            System.out.println(subtask);
+        }
+
+        fileManager.deleteTask(fTask1.getId());
+        System.out.println("\nСписок задач после удаления одной (из файла):");
+        System.out.println(fileManager.getAllTasks());
     }
 }

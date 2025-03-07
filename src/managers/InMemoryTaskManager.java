@@ -20,8 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public Task createTask(Task task) {
         if (!isTimeSlotAvailable(task)) {
-            System.out.println("Ошибка: задача пересекается по времени с другой.");
-            return null;
+            throw new IllegalArgumentException("Ошибка: нельзя добавлять пересекающиеся задачи.");
         }
         task.setId(currentId++);
         tasks.put(task.getId(), task);
@@ -42,8 +41,7 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
         if (!isTimeSlotAvailable(subtask)) {
-            System.out.println("Ошибка: подзадача пересекается по времени с другой.");
-            return null;
+            throw new IllegalArgumentException("Ошибка: нельзя добавлять пересекающиеся подзадачи.");
         }
         subtask.setId(currentId++);
         subtasks.put(subtask.getId(), subtask);
@@ -168,6 +166,7 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(epic.getId());
         }
         epics.clear();
+        prioritizedTasks.removeIf(task -> task.getType() == TaskType.SUBTASK);
     }
 
     // Удаление всех подзадач
@@ -226,7 +225,7 @@ public class InMemoryTaskManager implements TaskManager {
                 .noneMatch(existingTask -> {
                     LocalDateTime existingStart = existingTask.getStartTime();
                     LocalDateTime existingEnd = existingTask.getEndTime();
-                    return !(newEnd.isBefore(existingStart) || newStart.isAfter(existingEnd));
+                    return newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart);
                 });
     }
 }

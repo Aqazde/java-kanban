@@ -5,6 +5,7 @@ import tasks.Subtask;
 import tasks.Task;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
     Task createTask(Task task);
@@ -41,5 +42,13 @@ public interface TaskManager {
 
     Task getTaskById(int id);
 
+    Epic getEpicById(int id);
+
+    Subtask getSubtaskById(int id);
+
     List<Task> getHistory();
+
+    Set<Task> getPrioritizedTasks();
+
+    boolean isTimeSlotAvailable(Task task);
 }

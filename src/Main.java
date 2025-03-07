@@ -6,6 +6,8 @@ import tasks.Subtask;
 import tasks.Task;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
@@ -108,19 +110,32 @@ public class Main {
         System.out.println("\n\n ---- FileBackedTaskManager ---- ");
 
         File file = new File("tasks.csv");
-        FileBackedTaskManager fileManager = FileBackedTaskManager.loadFromFile(file);
-
+        if (file.exists()) {
+            file.delete();
+        }
+        FileBackedTaskManager fileManager = new FileBackedTaskManager(file);
 
         Task fTask1 = new Task("Написать дипломную", "Написать дипломную работу в университете");
+        fTask1.setDuration(Duration.ofMinutes(180));
+        fTask1.setStartTime(LocalDateTime.now().plusDays(1));
         fileManager.createTask(fTask1);
+
         Task fTask2 = new Task("Купить продукты", "Составить список и сходить в супермаркет");
+        fTask2.setDuration(Duration.ofMinutes(60));
+        fTask2.setStartTime(LocalDateTime.now().plusDays(2));
         fileManager.createTask(fTask2);
 
         Epic fEpic1 = new Epic("Поездка в Алматы", "Собрать вещи и оформить документы");
         fileManager.createEpic(fEpic1);
+
         Subtask fSubtask1 = new Subtask("Купить билеты", "Найти и оплатить билеты", fEpic1.getId());
+        fSubtask1.setDuration(Duration.ofMinutes(30));
+        fSubtask1.setStartTime(LocalDateTime.now().plusDays(3));
         fileManager.createSubtask(fSubtask1);
+
         Subtask fSubtask2 = new Subtask("Собрать вещи", "Подготовить и упаковать одежду", fEpic1.getId());
+        fSubtask2.setDuration(Duration.ofMinutes(90));
+        fSubtask2.setStartTime(LocalDateTime.now().plusDays(3).plusHours(2));
         fileManager.createSubtask(fSubtask2);
 
         System.out.println("\nСписок всех задач (из файла):");

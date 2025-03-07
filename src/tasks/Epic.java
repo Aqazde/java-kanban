@@ -48,7 +48,7 @@ public class Epic extends Task {
         }
     }
 
-    private void updateTimeAndDuration() {
+    public void updateTimeAndDuration() {
         if (subtasks.isEmpty()) {
             setDuration(Duration.ZERO);
             setStartTime(null);

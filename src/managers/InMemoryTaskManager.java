@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 public class InMemoryTaskManager implements TaskManager {
     int currentId = 1;
-    HashMap<Integer, Task> tasks = new HashMap<>();
-    HashMap<Integer, Epic> epics = new HashMap<>();
-    HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected HashMap<Integer, Task> tasks = new HashMap<>();
+    protected HashMap<Integer, Epic> epics = new HashMap<>();
+    protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private HistoryManager historyManager = new InMemoryHistoryManager();
 
     public Task createTask(Task task) {

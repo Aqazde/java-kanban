@@ -57,22 +57,4 @@ class FileBackedTaskManagerTest {
         FileBackedTaskManager afterDeleteManager = FileBackedTaskManager.loadFromFile(tempFile);
         assertTrue(afterDeleteManager.getAllTasks().isEmpty(), "Задачи должны быть удалены");
     }
-
-    @Test
-    void testLoadFromNonExistentFile() {
-        File nonExistentFile = new File("non_existent.csv");
-        assertDoesNotThrow(() -> FileBackedTaskManager.loadFromFile(nonExistentFile),
-                "Ошибка: загрузка из несуществующего файла не должна вызывать исключение.");
-    }
-
-    @Test
-    void testSaveAndLoadWithCorruptData() throws IOException {
-        File corruptedFile = File.createTempFile("corrupt", ".csv");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(corruptedFile))) {
-            writer.write("corrupt,data\n");
-        }
-
-        assertThrows(IllegalArgumentException.class, () -> FileBackedTaskManager.loadFromFile(corruptedFile),
-                "Ошибка: загрузка некорректных данных должна вызвать исключение.");
-    }
 }

@@ -15,7 +15,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
-            writer.write("id,type,name,status,description,epic\n"); // Заголовок CSV
+            writer.write("id,type,name,status,description,duration,startTime,epic\n");
 
             for (Task task : getAllTasks()) {
                 writer.write(TaskConverter.toString(task) + "\n");
@@ -45,23 +45,31 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 switch (task.getType()) {
                     case TASK:
                         manager.tasks.put(task.getId(), task);
+                        manager.prioritizedTasks.add(task);
                         break;
                     case EPIC:
-                        manager.epics.put(task.getId(), (Epic) task);
+                        Epic epic = (Epic) task;
+                        manager.epics.put(epic.getId(), epic);
                         break;
                     case SUBTASK:
                         Subtask subtask = (Subtask) task;
                         manager.subtasks.put(subtask.getId(), subtask);
-                        Epic epic = manager.epics.get(subtask.getEpicId());
-                        if (epic != null) {
-                            epic.addSubtask(subtask);
+                        Epic parentEpic = manager.epics.get(subtask.getEpicId());
+                        if (parentEpic != null) {
+                            parentEpic.addSubtask(subtask);
                         }
+                        manager.prioritizedTasks.add(subtask);
                         break;
                 }
                 maxId = Math.max(maxId, task.getId());
             }
 
             manager.currentId = maxId + 1;
+
+            for (Epic epic : manager.getAllEpics()) {
+                epic.updateStatus();
+                epic.updateTimeAndDuration();
+            }
 
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при загрузке из файла", e);

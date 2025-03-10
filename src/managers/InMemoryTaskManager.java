@@ -3,7 +3,6 @@ package managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-import tasks.TaskType;
 
 import java.util.*;
 import java.time.LocalDateTime;
@@ -94,6 +93,7 @@ public class InMemoryTaskManager implements TaskManager {
                 Epic epic = epics.get(subtask.getEpicId());
                 if (epic != null) {
                     epic.updateStatus();
+                    epic.updateTimeAndDuration();
                 }
                 prioritizedTasks.add(subtask);
             } else {

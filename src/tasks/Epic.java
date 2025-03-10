@@ -56,27 +56,27 @@ public class Epic extends Task {
             return;
         }
 
-        Duration totalDuration = subtasks.stream()
-                .map(Subtask::getDuration)
-                .reduce(Duration.ZERO, Duration::plus);
+        Duration totalDuration = Duration.ZERO;
+        LocalDateTime earliestStart = null;
+        LocalDateTime latestEnd = null;
+
+        for (Subtask subtask : subtasks) {
+            if (subtask.getStartTime() != null) {
+                if (earliestStart == null || subtask.getStartTime().isBefore(earliestStart)) {
+                    earliestStart = subtask.getStartTime();
+                }
+            }
+            if (subtask.getEndTime() != null) {
+                if (latestEnd == null || subtask.getEndTime().isAfter(latestEnd)) {
+                    latestEnd = subtask.getEndTime();
+                }
+            }
+            totalDuration = totalDuration.plus(subtask.getDuration());
+        }
 
         setDuration(totalDuration);
-
-        LocalDateTime start = subtasks.stream()
-                .map(Subtask::getStartTime)
-                .filter(time -> time != null)
-                .min(Comparator.naturalOrder())
-                .orElse(null);
-
-        setStartTime(start);
-
-        LocalDateTime end = subtasks.stream()
-                .map(Subtask::getEndTime)
-                .filter(time -> time != null)
-                .max(Comparator.naturalOrder())
-                .orElse(null);
-
-        this.endTime = end;
+        setStartTime(earliestStart);
+        this.endTime = latestEnd;
     }
 
     @Override

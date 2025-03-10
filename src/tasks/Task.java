@@ -16,7 +16,6 @@ public class Task {
         this.description = description;
         this.status = Status.NEW;
         this.duration = Duration.ZERO;
-        this.startTime = null;
     }
 
     public int getId() {

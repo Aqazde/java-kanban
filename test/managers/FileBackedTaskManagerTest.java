@@ -7,33 +7,40 @@ import tasks.Task;
 import tasks.Subtask;
 import tasks.Status;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
-    private FileBackedTaskManager fileManager;
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     private File tempFile;
 
     @BeforeEach
-    void setUp() throws IOException {
-        tempFile = File.createTempFile("tasks", ".csv");
-        fileManager = new FileBackedTaskManager(tempFile);
+    @Override
+    void setUp() {
+        try {
+            tempFile = File.createTempFile("tasks", ".csv");
+            manager = createManager();
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при создании временного файла", e);
+        }
+    }
+
+    @Override
+    protected FileBackedTaskManager createManager() {
+        return new FileBackedTaskManager(tempFile);
     }
 
     @Test
     void testSaveAndLoadFromFile() {
         Task task = new Task("Учеба", "Написать дипломную работу");
-        fileManager.createTask(task);
+        manager.createTask(task);
 
         Epic epic = new Epic("Диплом", "Создать приложение и написать отчет");
-        fileManager.createEpic(epic);
+        manager.createEpic(epic);
 
         Subtask subtask = new Subtask("Выбрать модель", "Сравнить модели", epic.getId());
-        fileManager.createSubtask(subtask);
+        manager.createSubtask(subtask);
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
 
@@ -47,13 +54,13 @@ class FileBackedTaskManagerTest {
         assertEquals(subtask, loadedManager.getAllSubtasks().get(0), "Подзадачи не совпадают");
 
         task.setStatus(Status.DONE);
-        fileManager.updateTask(task);
+        manager.updateTask(task);
 
         FileBackedTaskManager updatedManager = FileBackedTaskManager.loadFromFile(tempFile);
         assertEquals(Status.DONE, updatedManager.getTaskById(task.getId()).getStatus(), "Статус задачи " +
                 "должен обновиться");
 
-        fileManager.deleteTask(task.getId());
+        manager.deleteTask(task.getId());
         FileBackedTaskManager afterDeleteManager = FileBackedTaskManager.loadFromFile(tempFile);
         assertTrue(afterDeleteManager.getAllTasks().isEmpty(), "Задачи должны быть удалены");
     }

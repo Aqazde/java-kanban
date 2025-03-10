@@ -212,8 +212,7 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(prioritizedTasks);
     }
 
-    @Override
-    public boolean isTimeSlotAvailable(Task newTask) {
+    private boolean isTimeSlotAvailable(Task newTask) {
         if (newTask.getStartTime() == null) {
             return true;
         }

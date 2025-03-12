@@ -114,4 +114,26 @@ class InMemoryHistoryManagerTest {
         List<Task> history = historyManager.getHistory();
         assertEquals(List.of(task1, task2), history, "История не совпадает");
     }
+
+    @Test
+    void testHistoryPreservesOrder() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(List.of(task1, task2, task3), history, "Ошибка: задачи должны сохраняться в порядке добавления.");
+    }
+
+    @Test
+    void testHistoryRemovesTaskProperly() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(task2.getId());
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(List.of(task1, task3), history, "Ошибка: задача должна удаляться корректно.");
+    }
 }

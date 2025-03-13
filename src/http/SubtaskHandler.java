@@ -2,6 +2,7 @@ package http;
 
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
+import managers.NotFoundException;
 import managers.TaskManager;
 import tasks.Subtask;
 
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
 
 public class SubtaskHandler extends BaseHttpHandler {
     private final TaskManager taskManager;
@@ -42,23 +42,22 @@ public class SubtaskHandler extends BaseHttpHandler {
     }
 
     private void handleGet(HttpExchange exchange, String[] pathParts) throws IOException {
-        if (pathParts.length == 2) { // /subtasks
-            List<Subtask> subtasks = taskManager.getAllSubtasks();
-            String response = gson.toJson(subtasks);
-            sendText(exchange, response, 200);
-        } else if (pathParts.length == 3) { // /subtasks/{id}
-            int subtaskId = parseId(pathParts[2]);
-            Optional<Subtask> subtask = Optional.ofNullable(taskManager.getSubtaskById(subtaskId));
-
-            if (subtask.isPresent()) {
-                sendText(exchange, gson.toJson(subtask.get()), 200);
+        try {
+            if (pathParts.length == 2) { // /subtasks
+                List<Subtask> subtasks = taskManager.getAllSubtasks();
+                sendText(exchange, gson.toJson(subtasks), 200);
+            } else if (pathParts.length == 3) { // /subtasks/{id}
+                int subtaskId = parseId(pathParts[2]);
+                Subtask subtask = taskManager.getSubtaskById(subtaskId);
+                sendText(exchange, gson.toJson(subtask), 200);
             } else {
-                sendNotFound(exchange);
+                exchange.sendResponseHeaders(400, 0);
             }
-        } else {
-            exchange.sendResponseHeaders(400, 0);
+        } catch (NotFoundException e) {
+            sendNotFound(exchange);
         }
     }
+
 
     private void handlePost(HttpExchange exchange) throws IOException {
         try {

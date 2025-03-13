@@ -2,6 +2,7 @@ package http;
 
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
+import managers.NotFoundException;
 import managers.TaskManager;
 import tasks.Epic;
 
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
 
 public class EpicHandler extends BaseHttpHandler {
     private final TaskManager taskManager;
@@ -42,24 +42,22 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     private void handleGet(HttpExchange exchange, String[] pathParts) throws IOException {
-        if (pathParts.length == 2) { // /epics
-            List<Epic> epics = taskManager.getAllEpics();
-            String response = gson.toJson(epics);
-            sendText(exchange, response, 200);
+        try {
+            if (pathParts.length == 2) { // /epics
+                List<Epic> epics = taskManager.getAllEpics();
+                sendText(exchange, gson.toJson(epics), 200);
         } else if (pathParts.length == 3) { // /epics/{id}
             int epicId = parseId(pathParts[2]);
-            Optional<Epic> epic = Optional.ofNullable(taskManager.getEpicById(epicId));
-
-            if (epic.isPresent()) {
-                sendText(exchange, gson.toJson(epic.get()), 200);
-            } else {
-                sendNotFound(exchange);
-            }
-        } else if (pathParts.length == 4 && "subtasks".equals(pathParts[3])) { // /epics/{id}/subtasks
-            int epicId = parseId(pathParts[2]);
-            sendText(exchange, gson.toJson(taskManager.getSubtasksByEpic(epicId)), 200);
+                Epic epic = taskManager.getEpicById(epicId);
+                sendText(exchange, gson.toJson(epic), 200);
+            } else if (pathParts.length == 4 && "subtasks".equals(pathParts[3])) { // /epics/{id}/subtasks
+                int epicId = parseId(pathParts[2]);
+                sendText(exchange, gson.toJson(taskManager.getSubtasksByEpic(epicId)), 200);
         } else {
             exchange.sendResponseHeaders(400, 0);
+            }
+        } catch (NotFoundException e) {
+            sendNotFound(exchange);
         }
     }
 

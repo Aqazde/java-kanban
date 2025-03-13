@@ -2,6 +2,7 @@ package http;
 
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
+import managers.NotFoundException;
 import managers.TaskManager;
 import tasks.Task;
 
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
 
 public class TaskHandler extends BaseHttpHandler {
     private final TaskManager taskManager;
@@ -42,21 +42,19 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     private void handleGet(HttpExchange exchange, String[] pathParts) throws IOException {
-        if (pathParts.length == 2) { // /tasks
-            List<Task> tasks = taskManager.getAllTasks();
-            String response = gson.toJson(tasks);
-            sendText(exchange, response, 200);
-        } else if (pathParts.length == 3) { // /tasks/{id}
-            int taskId = parseId(pathParts[2]);
-            Optional<Task> task = Optional.ofNullable(taskManager.getTaskById(taskId));
-
-            if (task.isPresent()) {
-                sendText(exchange, gson.toJson(task.get()), 200);
+        try {
+            if (pathParts.length == 2) { // /tasks
+                List<Task> tasks = taskManager.getAllTasks();
+                sendText(exchange, gson.toJson(tasks), 200);
+            } else if (pathParts.length == 3) { // /tasks/{id}
+                int taskId = parseId(pathParts[2]);
+                Task task = taskManager.getTaskById(taskId);
+                sendText(exchange, gson.toJson(task), 200);
             } else {
-                sendNotFound(exchange);
+                exchange.sendResponseHeaders(400, 0);
             }
-        } else {
-            exchange.sendResponseHeaders(400, 0);
+        } catch (NotFoundException e) {
+            sendNotFound(exchange);
         }
     }
 

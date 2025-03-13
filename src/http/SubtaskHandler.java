@@ -61,19 +61,30 @@ public class SubtaskHandler extends BaseHttpHandler {
 
     private void handlePost(HttpExchange exchange) throws IOException {
         try {
+            System.out.println("Получен POST запрос для создания Subtask");
             Subtask subtask = gson.fromJson(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8), Subtask.class);
+
+            System.out.println("Попытка создания подзадачи с Epic ID: " + subtask.getEpicId());
 
             if (subtask.getId() == 0) {
                 taskManager.createSubtask(subtask);
                 sendText(exchange, gson.toJson(subtask), 201);
+                System.out.println("Подзадача успешно создана");
             } else {
                 taskManager.updateSubtask(subtask);
                 sendText(exchange, gson.toJson(subtask), 200);
+                System.out.println("Подзадача успешно обновлена");
             }
         } catch (JsonSyntaxException e) {
+            System.err.println("Ошибка JSON: " + e.getMessage());
             sendServerError(exchange, "Invalid JSON format");
         } catch (IllegalArgumentException e) {
+            System.err.println("Ошибка пересечения задач: " + e.getMessage());
             sendHasInteractions(exchange);
+        } catch (Exception e) {
+            System.err.println("Внутренняя ошибка сервера: " + e.getMessage());
+            e.printStackTrace();
+            sendServerError(exchange, "Internal Server Error: " + e.getMessage());
         }
     }
 

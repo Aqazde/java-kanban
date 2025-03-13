@@ -36,8 +36,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Subtask createSubtask(Subtask subtask) {
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
-            System.out.println("Эпик с id " + subtask.getEpicId() + " не существует");
-            return null;
+            throw new NotFoundException("Эпик с id " + subtask.getEpicId() + " не найден");
         }
         if (!isTimeSlotAvailable(subtask)) {
             throw new IllegalArgumentException("Ошибка: нельзя добавлять пересекающиеся подзадачи.");

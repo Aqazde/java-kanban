@@ -36,7 +36,7 @@ public class TaskHandlerTest {
     @BeforeAll
     static void setUp() throws IOException {
         manager = new InMemoryTaskManager();
-        taskServer = new HttpTaskServer();
+        taskServer = new HttpTaskServer(manager);
         taskServer.start();
     }
 
@@ -51,7 +51,6 @@ public class TaskHandlerTest {
     }
 
     @Test
-    @Order(1)
     void shouldCreateTask() throws IOException, InterruptedException {
         Task task = new Task("Test Task", "Test Description");
         task.setStatus(Status.NEW);
@@ -72,7 +71,6 @@ public class TaskHandlerTest {
     }
 
     @Test
-    @Order(2)
     void shouldGetAllTasks() throws IOException, InterruptedException {
         Task task = new Task("Test Task", "Test Description");
         task.setStatus(Status.NEW);
@@ -93,7 +91,6 @@ public class TaskHandlerTest {
     }
 
     @Test
-    @Order(3)
     void shouldReturn404ForNonExistentTask() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks/999"))

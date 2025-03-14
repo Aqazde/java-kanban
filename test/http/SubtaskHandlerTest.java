@@ -33,7 +33,7 @@ public class SubtaskHandlerTest {
     @BeforeAll
     static void setUp() throws IOException {
         manager = new InMemoryTaskManager();
-        taskServer = new HttpTaskServer();
+        taskServer = new HttpTaskServer(manager);
         taskServer.start();
     }
 
@@ -48,7 +48,6 @@ public class SubtaskHandlerTest {
     }
 
     @Test
-    @Order(1)
     void shouldCreateSubtask() throws IOException, InterruptedException {
         Epic epic = new Epic("Epic", "Description");
         String jsonEpic = gson.toJson(epic);

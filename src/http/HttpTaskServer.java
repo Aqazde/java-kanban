@@ -1,7 +1,6 @@
 package http;
 
 import com.sun.net.httpserver.HttpServer;
-import managers.Managers;
 import managers.TaskManager;
 
 import java.io.IOException;
@@ -12,8 +11,8 @@ public class HttpTaskServer {
     private final HttpServer server;
     private final TaskManager taskManager;
 
-    public HttpTaskServer() throws IOException {
-        taskManager = Managers.getDefault();
+    public HttpTaskServer(TaskManager taskManager) throws IOException {
+        this.taskManager = taskManager;
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
         server.createContext("/tasks", new TaskHandler(taskManager));
@@ -35,7 +34,8 @@ public class HttpTaskServer {
 
     public static void main(String[] args) {
         try {
-            HttpTaskServer server = new HttpTaskServer();
+            TaskManager manager = managers.Managers.getDefault();
+            HttpTaskServer server = new HttpTaskServer(manager);
             server.start();
         } catch (IOException e) {
             System.err.println("Ошибка при запуске сервера: " + e.getMessage());

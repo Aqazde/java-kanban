@@ -34,7 +34,7 @@ public class EpicHandlerTest {
     @BeforeAll
     static void setUp() throws IOException {
         manager = new InMemoryTaskManager();
-        taskServer = new HttpTaskServer();
+        taskServer = new HttpTaskServer(manager);
         taskServer.start();
     }
 
@@ -49,7 +49,6 @@ public class EpicHandlerTest {
     }
 
     @Test
-    @Order(1)
     void shouldCreateEpic() throws IOException, InterruptedException {
         Epic epic = new Epic("Test Epic", "Epic Description");
 
@@ -67,7 +66,6 @@ public class EpicHandlerTest {
     }
 
     @Test
-    @Order(2)
     void shouldGetAllEpics() throws IOException, InterruptedException {
         Epic epic = new Epic("Test Epic", "Epic Description");
         manager.createEpic(epic);
@@ -87,7 +85,6 @@ public class EpicHandlerTest {
     }
 
     @Test
-    @Order(3)
     void shouldReturn404ForNonExistentEpic() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/epics/999"))

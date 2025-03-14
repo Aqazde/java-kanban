@@ -34,7 +34,7 @@ public class HistoryHandlerTest {
     @BeforeAll
     static void setUp() throws IOException {
         manager = new InMemoryTaskManager();
-        taskServer = new HttpTaskServer();
+        taskServer = new HttpTaskServer(manager);
         taskServer.start();
     }
 
@@ -44,7 +44,6 @@ public class HistoryHandlerTest {
     }
 
     @Test
-    @Order(1)
     void shouldGetEmptyHistoryInitially() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/history"))

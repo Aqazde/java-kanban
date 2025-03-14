@@ -35,7 +35,7 @@ public class PrioritizedHandlerTest {
     @BeforeAll
     static void setUp() throws IOException {
         manager = new InMemoryTaskManager();
-        taskServer = new HttpTaskServer();
+        taskServer = new HttpTaskServer(manager);
         taskServer.start();
     }
 
@@ -54,7 +54,6 @@ public class PrioritizedHandlerTest {
     }
 
     @Test
-    @Order(1)
     void shouldReturnEmptyPrioritizedListWhenNoTasks() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/prioritized"))
@@ -69,7 +68,6 @@ public class PrioritizedHandlerTest {
     }
 
     @Test
-    @Order(2)
     void shouldReturnTasksInPrioritizedOrder() throws IOException, InterruptedException {
         Task task1 = new Task("Task 1", "Earliest task");
         task1.setStatus(Status.NEW);

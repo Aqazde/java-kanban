@@ -39,11 +39,11 @@ public interface TaskManager {
 
     void deleteAllSubtasks();
 
-    Task getTaskById(int id) throws NotFoundException;
+    Task getTaskById(int id);
 
-    Epic getEpicById(int id) throws NotFoundException;
+    Epic getEpicById(int id);
 
-    Subtask getSubtaskById(int id) throws NotFoundException;
+    Subtask getSubtaskById(int id);
 
     List<Task> getHistory();
 

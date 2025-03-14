@@ -62,7 +62,7 @@ public class SubtaskHandlerTest {
         assertEquals(201, epicResponse.statusCode(), "Ошибка при создании эпика");
 
         Epic createdEpic = gson.fromJson(epicResponse.body(), Epic.class);
-        System.out.println("Создан эпик с ID: " + createdEpic.getId());
+        assertNotNull(createdEpic, "Созданный эпик не должен быть null");
 
         Subtask subtask = new Subtask("Subtask", "Description", createdEpic.getId());
         String jsonSubtask = gson.toJson(subtask);
@@ -74,8 +74,18 @@ public class SubtaskHandlerTest {
                 .build();
 
         HttpResponse<String> subtaskResponse = client.send(subtaskRequest, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Ответ сервера: " + subtaskResponse.body());
-
         assertEquals(201, subtaskResponse.statusCode(), "Ошибка при создании подзадачи");
+
+        // Проверка тела ответа
+        Subtask createdSubtask = gson.fromJson(subtaskResponse.body(), Subtask.class);
+        assertNotNull(createdSubtask, "Созданная подзадача не должна быть null");
+        assertEquals(subtask.getTitle(), createdSubtask.getTitle(), "Название подзадачи должно совпадать");
+        assertEquals(subtask.getDescription(), createdSubtask.getDescription(), "Описание подзадачи " +
+                "должно совпадать");
+
+        // Проверка, что подзадача сохранена в менеджере
+        Subtask savedSubtask = manager.getSubtaskById(createdSubtask.getId());
+        assertNotNull(savedSubtask, "Подзадача должна быть сохранена в менеджере");
+        assertEquals(createdSubtask.getId(), savedSubtask.getId(), "ID подзадачи должно совпадать");
     }
 }

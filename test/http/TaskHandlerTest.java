@@ -68,6 +68,15 @@ public class TaskHandlerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(201, response.statusCode(), "Должен быть статус 201 (Created)");
+
+        Task createdTask = gson.fromJson(response.body(), Task.class);
+        assertNotNull(createdTask, "Созданная задача не должна быть null");
+        assertEquals(task.getTitle(), createdTask.getTitle(), "Название задачи должно совпадать");
+        assertEquals(task.getDescription(), createdTask.getDescription(), "Описание задачи должно совпадать");
+
+        Task savedTask = manager.getTaskById(createdTask.getId());
+        assertNotNull(savedTask, "Задача должна быть сохранена в менеджере");
+        assertEquals(createdTask.getId(), savedTask.getId(), "ID задачи должно совпадать");
     }
 
     @Test

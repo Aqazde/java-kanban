@@ -62,7 +62,16 @@ public class EpicHandlerTest {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(201, response.statusCode());
+        assertEquals(201, response.statusCode(), "Должен быть статус 201 (Created)");
+
+        Epic createdEpic = gson.fromJson(response.body(), Epic.class);
+        assertNotNull(createdEpic, "Созданный эпик не должен быть null");
+        assertEquals(epic.getTitle(), createdEpic.getTitle(), "Название эпика должно совпадать");
+        assertEquals(epic.getDescription(), createdEpic.getDescription(), "Описание эпика должно совпадать");
+
+        Epic savedEpic = manager.getEpicById(createdEpic.getId());
+        assertNotNull(savedEpic, "Эпик должен быть сохранен в менеджере");
+        assertEquals(createdEpic.getId(), savedEpic.getId(), "ID эпика должно совпадать");
     }
 
     @Test

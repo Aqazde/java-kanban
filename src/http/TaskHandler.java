@@ -78,7 +78,11 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     private void handleDelete(HttpExchange exchange, String[] pathParts) throws IOException {
-        if (pathParts.length == 3) { // /tasks/{id}
+        if (pathParts.length == 2) { // /tasks
+            taskManager.deleteAllTasks();
+            sendText(exchange, "All tasks deleted", 200);
+        }
+        else if (pathParts.length == 3) { // /tasks/{id}
             int taskId = parseId(pathParts[2]);
             taskManager.deleteTask(taskId);
             sendText(exchange, "Task deleted", 200);

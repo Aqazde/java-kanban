@@ -3,6 +3,7 @@ package http;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import managers.InMemoryTaskManager;
+import managers.NotFoundException;
 import managers.TaskManager;
 import org.junit.jupiter.api.*;
 import tasks.Epic;
@@ -87,5 +88,57 @@ public class SubtaskHandlerTest {
         Subtask savedSubtask = manager.getSubtaskById(createdSubtask.getId());
         assertNotNull(savedSubtask, "Подзадача должна быть сохранена в менеджере");
         assertEquals(createdSubtask.getId(), savedSubtask.getId(), "ID подзадачи должно совпадать");
+    }
+
+    @Test
+    void shouldUpdateSubtask() throws IOException, InterruptedException {
+        Epic epic = new Epic("Test Epic", "Epic Description");
+        manager.createEpic(epic);
+        Subtask subtask = new Subtask("Test Subtask", "Subtask Description", epic.getId());
+        manager.createSubtask(subtask);
+
+        subtask.setDescription("Updated Description");
+        String jsonSubtask = gson.toJson(subtask);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/subtasks"))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonSubtask))
+                .header("Content-Type", "application/json")
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, response.statusCode(), "Должен быть статус 201 (OK)");
+        Subtask updatedSubtask = gson.fromJson(response.body(), Subtask.class);
+        assertEquals("Updated Description", updatedSubtask.getDescription(), "Описание подзадачи" +
+                " должно быть обновлено");
+    }
+
+    @Test
+    void shouldDeleteSubtaskById() throws IOException, InterruptedException {
+        Epic epic = new Epic("Test Epic", "Epic Description");
+        manager.createEpic(epic);
+        Subtask subtask = new Subtask("Test Subtask", "Subtask Description", epic.getId());
+        manager.createSubtask(subtask);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/subtasks/" + subtask.getId()))
+                .DELETE()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode(), "Должен быть статус 200 (OK)");
+        assertThrows(NotFoundException.class, () -> manager.getSubtaskById(subtask.getId()), "Подзадача" +
+                " должна быть удалена");
+    }
+
+    @Test
+    void shouldReturn404ForNonExistentSubtask() throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/subtasks/999"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(404, response.statusCode(), "Должен быть статус 404 (Not Found)");
     }
 }

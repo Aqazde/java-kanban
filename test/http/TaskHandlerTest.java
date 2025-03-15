@@ -128,12 +128,16 @@ public class TaskHandlerTest {
         assertEquals(406, response.statusCode(), "Должен быть статус 406 (Conflict)");
     }
 
-
     @Test
     void shouldGetAllTasks() throws IOException, InterruptedException {
-        Task task = new Task("Test Task", "Test Description");
-        task.setStatus(Status.NEW);
-        manager.createTask(task);
+        // Создаем две задачи
+        Task task1 = new Task("Test Task 1", "Test Description 1");
+        task1.setStatus(Status.NEW);
+        manager.createTask(task1);
+
+        Task task2 = new Task("Test Task 2", "Test Description 2");
+        task2.setStatus(Status.NEW);
+        manager.createTask(task2);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks"))
@@ -146,7 +150,21 @@ public class TaskHandlerTest {
 
         List<Task> tasks = gson.fromJson(response.body(), new TypeToken<List<Task>>() {}.getType());
         assertNotNull(tasks, "Список задач не должен быть null");
-        assertEquals(1, tasks.size(), "Должна быть одна задача");
+
+        assertEquals(2, tasks.size(), "Должны быть две задачи");
+
+        Task retrievedTask1 = tasks.get(0);
+        Task retrievedTask2 = tasks.get(1);
+
+        assertEquals(task1.getTitle(), retrievedTask1.getTitle(), "Название первой задачи должно совпадать");
+        assertEquals(task1.getDescription(), retrievedTask1.getDescription(), "Описание первой задачи должно" +
+                " совпадать");
+        assertEquals(task1.getStatus(), retrievedTask1.getStatus(), "Статус первой задачи должен совпадать");
+
+        assertEquals(task2.getTitle(), retrievedTask2.getTitle(), "Название второй задачи должно совпадать");
+        assertEquals(task2.getDescription(), retrievedTask2.getDescription(), "Описание второй задачи должно" +
+                " совпадать");
+        assertEquals(task2.getStatus(), retrievedTask2.getStatus(), "Статус второй задачи должен совпадать");
     }
 
     @Test

@@ -68,7 +68,7 @@ public class TaskHandler extends BaseHttpHandler {
                 sendText(exchange, gson.toJson(task), 201);
             } else {
                 taskManager.updateTask(task);
-                sendText(exchange, gson.toJson(task), 200);
+                sendText(exchange, gson.toJson(task), 201);
             }
         } catch (JsonSyntaxException e) {
             sendServerError(exchange, "Invalid JSON format");

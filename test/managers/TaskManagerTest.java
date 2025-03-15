@@ -75,7 +75,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.createTask(task);
         manager.deleteTask(task.getId());
 
-        assertNull(manager.getTaskById(task.getId()), "Задача не удалена");
+        assertThrows(NotFoundException.class, () -> manager.getTaskById(task.getId()),
+                "После удаления задачи должно выбрасываться исключение NotFoundException");
     }
 
     @Test
@@ -87,8 +88,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         manager.deleteEpic(epic.getId());
 
-        assertNull(manager.getEpicById(epic.getId()), "Эпик не удален");
-        assertNull(manager.getSubtaskById(subtask.getId()), "Подзадача не удалена вместе с эпиком");
+        assertThrows(NotFoundException.class, () -> manager.getEpicById(epic.getId()),
+                "После удаления эпика должно выбрасываться исключение NotFoundException");
+
+        assertThrows(NotFoundException.class, () -> manager.getSubtaskById(subtask.getId()),
+                "Подзадача должна быть удалена вместе с эпиком");
     }
 
     @Test
@@ -99,7 +103,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.createSubtask(subtask);
         manager.deleteSubtask(subtask.getId());
 
-        assertNull(manager.getSubtaskById(subtask.getId()), "Подзадача не удалена");
+        assertThrows(NotFoundException.class, () -> manager.getSubtaskById(subtask.getId()),
+                "После удаления подзадачи должно выбрасываться исключение NotFoundException");
     }
 
     @Test

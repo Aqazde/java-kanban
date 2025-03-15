@@ -16,16 +16,19 @@ public class Epic extends Task {
     }
 
     public List<Subtask> getSubtasks() {
+        if (subtasks == null) {
+            subtasks = new ArrayList<>();
+        }
         return subtasks;
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
+        getSubtasks().add(subtask);
         updateTimeAndDuration();
     }
 
     public void removeSubtask(Subtask subtask) {
-        subtasks.remove(subtask);
+        getSubtasks().remove(subtask);
         updateTimeAndDuration();
     }
 
@@ -98,7 +101,7 @@ public class Epic extends Task {
                 ", duration=" + getDuration().toMinutes() + " min" +
                 ", startTime=" + getStartTime() +
                 ", endTime=" + endTime +
-                ", subtasks=" + subtasks +
+                ", subtasks=" + (subtasks != null ? subtasks.size() : 0) +
                 '}';
     }
 }

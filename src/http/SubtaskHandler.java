@@ -72,7 +72,7 @@ public class SubtaskHandler extends BaseHttpHandler {
                 System.out.println("Подзадача успешно создана");
             } else {
                 taskManager.updateSubtask(subtask);
-                sendText(exchange, gson.toJson(subtask), 200);
+                sendText(exchange, gson.toJson(subtask), 201);
                 System.out.println("Подзадача успешно обновлена");
             }
         } catch (JsonSyntaxException e) {

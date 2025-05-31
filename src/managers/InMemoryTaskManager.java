@@ -36,8 +36,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Subtask createSubtask(Subtask subtask) {
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
-            System.out.println("Эпик с id " + subtask.getEpicId() + " не существует");
-            return null;
+            throw new NotFoundException("Эпик с id " + subtask.getEpicId() + " не найден");
         }
         if (!isTimeSlotAvailable(subtask)) {
             throw new IllegalArgumentException("Ошибка: нельзя добавлять пересекающиеся подзадачи.");
@@ -183,6 +182,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int id) {
         Task task = tasks.get(id);
+        if (task == null) {
+            throw new NotFoundException("Задача с id " + id + " не найдена");
+        }
         historyManager.add(task);
         return task;
     }
@@ -190,6 +192,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(int id) {
         Epic epic = epics.get(id);
+        if (epic == null) {
+            throw new NotFoundException("Эпик с id " + id + " не найден");
+        }
         historyManager.add(epic);
         return epic;
     }
@@ -197,6 +202,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask getSubtaskById(int id) {
         Subtask subtask = subtasks.get(id);
+        if (subtask == null) {
+            throw new NotFoundException("Подзадача с id " + id + " не найдена");
+        }
         historyManager.add(subtask);
         return subtask;
     }
